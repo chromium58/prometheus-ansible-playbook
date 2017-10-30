@@ -1,0 +1,81 @@
+---
+prometheus_version:                 1.5.2
+
+prometheus_rule_files:
+  common_rules:
+    src: conf/common_alert.rules
+    dest: common_alert.rules
+  ssl_rules:
+    src: conf/ssl_expiry.rules
+    dest: ssl_expiry.rules
+  http_rules:
+    src: conf/http_alert.rules
+    dest: http_alert.rules
+  nginx_vts_rules:
+    src: conf/nginx_vts_alert.rules
+    dest: nginx_vts_alert.rules
+  hpraid_rules:
+    src: conf/hpraid.rules
+    dest: hpraid.rules
+  mdadm_rules:
+    src: conf/mdadm.rules
+    dest: mdadm.rules
+
+
+prometheus_exporters_dict:
+
+  node_exporter:
+    version: '0.13.0'
+    url: 'https://github.com/prometheus/node_exporter/releases/download/v0.13.0/node_exporter-0.13.0.linux-amd64.tar.gz'
+
+  redis_exporter:
+    version: '0.10.8'
+    url: 'https://github.com/oliver006/redis_exporter/releases/download/v0.10.8/redis_exporter-v0.10.8.linux-amd64.tar.gz'
+    binary_path: "{{ prometheus_install_path }}/redis_exporter-0.10.8.{{ prometheus_platform_suffix }}/redis_exporter"
+    subdir: no
+    options: "-redis.alias={{ inventory_hostname }}"
+
+  postgres_exporter:
+    version: '0.1.2'
+    binary_url: 'https://github.com/wrouesnel/postgres_exporter/releases/download/v0.1.2/postgres_exporter'
+    datasource: "user=postgres host=/var/run/postgresql/ sslmode=disable"
+
+  mysqld_exporter:
+    version: '0.9.0'
+    url: 'https://github.com/prometheus/mysqld_exporter/releases/download/v0.9.0/mysqld_exporter-0.9.0.linux-amd64.tar.gz'
+    options: '-config.my-cnf={{ prometheus_install_path }}/mysqld_exporter-0.9.0.{{ prometheus_platform_suffix }}/my.cnf'
+
+  nginx_vts_exporter:
+    version: '0.5'
+    url: 'https://github.com/hnlq715/nginx-vts-exporter/archive/v0.5.tar.gz'
+    binary_path: "{{ prometheus_install_path }}/nginx_vts_exporter-0.5.{{ prometheus_platform_suffix }}/nginx-vts-exporter-0.5/bin/nginx-vts-exporter"
+    options: "-nginx.scrape_uri=http://178.159.252.212:10088/format/json"
+    subdir: no
+
+  hpraid_exporter:
+    version: '0.0.3'
+    url: 'https://github.com/chromium58/hpraid_exporter/releases/download/v0.0.3/hpraid_exporter-0.0.3.linux-amd64.tar.gz'
+    options: '-cmd=/sbin/hpssacli'
+    sudo: "yes"
+
+  process_exporter:
+    version: '0.1.0'
+    url: 'https://github.com/ncabatoff/process-exporter/releases/download/v0.1.0/process-exporter-0.1.0.linux-amd64.tar.gz'
+    binary_path: "{{ prometheus_install_path }}/process-exporter-0.1.0.{{ prometheus_platform_suffix }}/process-exporter"
+    conf: yes
+    options: "-config.path /etc/prometheus/process_exporter.yml"
+    sudo: "yes"
+
+prometheus_alertmanager_conf: "conf/alertmanager.yml"
+
+prometheus_blackbox_conf: "conf/blackbox.yml"
+
+prometheus_conf_main: "library/templates/prometheus.yml"
+
+prometheus_alertmanager_url: "http://localhost:9093/"
+
+prometheus_postgres_datasource_variable: "user=postgres host=/var/run/postgresql/ sslmode=disable"
+
+prometheus_allowed_ips:
+  - "192.168.0.0/16"
+  - "127.0.0.1/8"

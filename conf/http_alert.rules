@@ -1,0 +1,12 @@
+{% raw %}
+ALERT ProbeFailing
+  IF probe_success < 1
+  FOR 6m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    SUMMARY = "probe {{ $labels.instance }} failing",
+    DESCRIPTION = "probe {{ $labels.instance }} failing"
+  }
+{% endraw %}

@@ -1,0 +1,15 @@
+global:
+  smtp_smarthost: 'YOUR SMTP SERVER HERE'
+  smtp_from: 'FROM EMAIL'
+
+route:
+  group_by: [Alertname]
+  # Send all notifications to me.
+  receiver: Admins
+
+receivers:
+- name: Admins
+  email_configs:
+  - to: "YOUR EMAIL HERE"
+    send_resolved: true
+    require_tls: false

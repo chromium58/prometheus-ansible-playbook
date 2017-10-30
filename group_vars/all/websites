@@ -1,0 +1,4 @@
+nagios_check_websites:
+  example:
+    websites:
+      - url: 'http://www.example.com'

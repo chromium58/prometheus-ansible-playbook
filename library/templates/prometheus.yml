@@ -1,0 +1,167 @@
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 2m # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'prometheus-monitor'
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - rules/ssl_expiry.rules
+  - rules/common_alert.rules
+  - rules/http_alert.rules
+  - rules/nginx_vts_alert.rules
+  - rules/hpraid.rules
+  - rules/mdadm.rules
+
+  # - "first.rules"
+  # - "second.rules"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+scrape_configs:
+  - job_name: "node"
+    scrape_interval: "15s"
+#    target_groups:
+    static_configs:
+      - targets:
+{% for host in node_exporters %}
+        - {{ host }}
+{% endfor %}
+{% if redis_exporters is defined %}
+  - job_name: "redis"
+    scrape_interval: "15s"
+#    target_groups:
+    static_configs:
+      - targets:
+{% for host in redis_exporters %}
+        - {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if hpraid_exporters is defined %}
+  - job_name: "hpraid"
+    scrape_interval: "2m"
+#    target_groups:
+    static_configs:
+      - targets:
+{% for host in hpraid_exporters %}
+        - {{ host }}
+{% endfor %}
+{% endif %}
+
+
+{% if process_exporters is defined %}
+  - job_name: "procexporter"
+    scrape_interval: "15s"
+#    target_groups:
+    static_configs:
+      - targets:
+{% for host in process_exporters %}
+        - {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if postgres_exporters is defined %}
+  - job_name: "dbexporter"
+    scrape_interval: "15s"
+#    target_groups:
+    static_configs:
+      - targets:
+{% for host in postgres_exporters %}
+        - {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if mysqld_exporters is defined %}
+  - job_name: "mysqld"
+    scrape_interval: "15s"
+#    target_groups:
+    static_configs:
+      - targets:
+{% for host in mysqld_exporters %}
+        - {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if nginx_vts_exporters is defined %}
+  - job_name: "nginx-vts"
+    scrape_interval: "15s"
+#    target_groups:
+    static_configs:
+      - targets:
+{% for host in nginx_vts_exporters %}
+        - {{ host }}
+{% endfor %}
+{% endif %}
+
+{% for group_name, group in nagios_check_websites.items() %}
+  - job_name: "blackbox-{{ group_name }}"
+    scrape_interval:     2m
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+{% for website in group.websites %}
+{% if website.status is not defined %}
+        - {{ website.url }}
+{% endif %}
+{% endfor %}
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 127.0.0.1:9115  # Blackbox exporter.
+{% endfor %}
+
+{% for group_name, group in nagios_check_websites.items() %}
+{% for website in group.websites %}
+{% if website.status is defined %}
+
+  - job_name: "blackbox-nonstandard-status-{{ group_name }}-{{ loop.index }}"
+    scrape_interval:     2m
+    metrics_path: /probe
+    params:
+      module: [http_{{ website.status }}]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - {{ website.url }}
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 127.0.0.1:9115  # Blackbox exporter.
+{% endif %}
+{% endfor %}
+{% endfor %}

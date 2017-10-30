@@ -1,0 +1,12 @@
+{% if nginx_upstreams is defined %}
+{% for upstream in nginx_upstreams %}
+ALERT High500s_{{ upstream }}
+  IF (sum(rate(nginx_upstream_requests{code="5xx", upstream="{{ upstream }}"}[5m])) / sum(rate(nginx_upstream_requests{code="total", upstream="{{ upstream }}"}[5m]))) * 100 > 10
+  FOR 10m
+  LABELS { severity = "page" }
+  ANNOTATIONS {
+    summary = "High 500 ratio on {{ upstream }}",
+    description = "Upstream {{ upstream }} has an error ratio of {% raw %} {{ $value }} {% endraw %} percents for 10m.",
+  }
+{% endfor %}
+{% endif %}

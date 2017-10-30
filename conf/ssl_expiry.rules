@@ -1,0 +1,12 @@
+{% raw %}
+ALERT SSLCertExpiringSoon
+ IF round((probe_ssl_earliest_cert_expiry - time()) / 86400) < 15
+ FOR 10m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    SUMMARY = "SSL EXPIRE",
+    DESCRIPTION = "SSL certificate on {{ $labels.instance }} will expire in {{ $value }} days"
+  }
+{% endraw %}

@@ -1,0 +1,77 @@
+---
+
+- name: 'Install python'
+  hosts: all
+  gather_facts: no
+  pre_tasks:
+    - raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- hosts: master
+  vars:
+    prometheus_components:
+      - prometheus
+      - blackbox_exporter
+
+    prometheus_exporters:
+      - node_exporter
+      - nginx_vts_exporter
+  roles:
+    - { role: ansible-prometheus, tags: prometheus-master }
+    - grafana
+  tags: master
+
+- hosts: mon
+  vars:
+    prometheus_exporters:
+      - node_exporter
+  roles:
+    - ansible-prometheus
+  tags: mon
+
+- hosts: redis
+  vars:
+    redis_version: 3:3.2.9-2chl1~trusty1
+    prometheus_exporters:
+      - node_exporter
+      - redis_exporter
+  roles:
+    - ansible-redis
+    - ansible-prometheus
+  tags: redis
+
+- hosts: postgres
+  vars:
+    prometheus_exporters:
+      - postgres_exporter
+      - node_exporter
+  roles:
+    - postgres
+    - ansible-prometheus
+  tags: postgres
+
+- hosts: mysql
+  vars:
+    prometheus_exporters:
+      - mysqld_exporter
+      - node_exporter
+  roles:
+    - mysql
+    - ansible-prometheus
+  tags: mysql
+
+- hosts: hpraid
+  vars:
+    prometheus_exporters:
+      - hpraid_exporter
+      - node_exporter
+  roles:
+    - ansible-prometheus
+  tags: hpraid
+
+- hosts: procexporter
+  vars:
+    prometheus_exporters:
+      - process_exporter
+      - node_exporter
+  roles:
+    - ansible-prometheus

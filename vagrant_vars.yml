@@ -1,0 +1,35 @@
+node_exporters:
+  - 'localhost:9100'
+  - '192.168.99.4:9100'
+
+nginx_vts_exporters:
+  - 'localhost:9913'
+process_exporters:
+  - '192.168.99.5:9256'
+
+postgres_exporters:
+  - '192.168.99.6:9187'
+
+postgres_exporters:
+  - '192.168.99.6:9187'
+
+mysqld_exporters:
+  - '192.168.99.7:9104'
+  - '192.168.99.8:9104'
+
+redis_exporters:
+  - '192.168.99.7:9121'
+
+mysqld_databases:
+  - name: mysql_test
+
+mysql_users:
+  - name: prometheus
+    password: prom123
+    priv: '*.*:PROCESS,REPLICATION CLIENT,SELECT'
+    host: 'localhost'
+
+process_names_dict:
+  process_names:
+    - comm:
+        - bash

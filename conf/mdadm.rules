@@ -1,0 +1,10 @@
+{% raw %}
+ALERT MDADM_DRIVE_FAILURE
+  IF node_md_disks - node_md_disks_active != 0
+  FOR 10m
+  LABELS { severity = "page" }
+  ANNOTATIONS {
+    summary = "Array {{$labels.device}} failure",
+    description = "Detected drive failure in array {{$labels.device}} on host {{$labels.instance}}"
+  }
+{% endraw %}

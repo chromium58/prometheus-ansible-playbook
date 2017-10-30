@@ -1,0 +1,15 @@
+[submodule "roles/mysql"]
+	path = roles/mysql
+	url = https://github.com/geerlingguy/ansible-role-mysql.git
+[submodule "roles/postgres"]
+	path = roles/postgres
+	url = https://github.com/ANXS/postgresql.git
+[submodule "roles/grafana"]
+	path = roles/grafana
+	url = https://github.com/Stouts/Stouts.grafana.git
+[submodule "roles/ansible-redis"]
+	path = roles/ansible-redis
+	url = https://github.com/geerlingguy/ansible-role-redis.git
+[submodule "roles/ansible-prometheus"]
+	path = roles/ansible-prometheus
+	url = https://github.com/chromium58/ansible-prometheus.git

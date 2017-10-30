@@ -1,0 +1,10 @@
+{% raw %}
+ALERT HPRAID_DRIVE_FAILURE
+  IF hpraid_diskstate{drive_status!="OK"}
+  FOR 10m
+  LABELS { severity = "page" }
+  ANNOTATIONS {
+    summary = "Drive {{$labels.drive_describe}} failure",
+    description = "{{$labels.drive_describe}} status is {{$labels.drive_status}}"
+  }
+{% endraw %}
