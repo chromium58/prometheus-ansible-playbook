@@ -1,27 +1,27 @@
 ---
-prometheus_version:                 1.5.2
+prometheus_version:                 2.0.0
 prometheus_alertmanager_version:    0.9.1
 prometheus_blackbox_exporter_version:   0.7.0
 
 prometheus_rule_files:
   common_rules:
-    src: conf/common_alert.rules
-    dest: common_alert.rules
+    src: conf/common_alert.rules.yml
+    dest: common_alert.rules.yml
   ssl_rules:
-    src: conf/ssl_expiry.rules
-    dest: ssl_expiry.rules
+    src: conf/ssl_expiry.rules.yml
+    dest: ssl_expiry.rules.yml
   http_rules:
-    src: conf/http_alert.rules
-    dest: http_alert.rules
+    src: conf/http_alert.rules.yml
+    dest: http_alert.rules.yml
   nginx_vts_rules:
-    src: conf/nginx_vts_alert.rules
-    dest: nginx_vts_alert.rules
+    src: conf/nginx_vts_alert.rules.yml
+    dest: nginx_vts_alert.rules.yml
   hpraid_rules:
-    src: conf/hpraid.rules
-    dest: hpraid.rules
+    src: conf/hpraid.rules.yml
+    dest: hpraid.rules.yml
   mdadm_rules:
-    src: conf/mdadm.rules
-    dest: mdadm.rules
+    src: conf/mdadm.rules.yml
+    dest: mdadm.rules.yml
 
 node_exporter_version: '0.15.0'
 redis_exporter_version: '0.13'
@@ -82,7 +82,7 @@ prometheus_blackbox_conf: "conf/blackbox.yml"
 
 prometheus_conf_main: "library/templates/prometheus.yml"
 
-prometheus_alertmanager_url: "http://localhost:9093/"
+prometheus_alertmanager_url: "localhost:9093"
 
 prometheus_postgres_datasource_variable: "user=postgres host=/var/run/postgresql/ sslmode=disable"
 

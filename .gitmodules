@@ -13,3 +13,4 @@
 [submodule "roles/ansible-prometheus"]
 	path = roles/ansible-prometheus
 	url = https://github.com/chromium58/ansible-prometheus.git
+	branch = prometheus2.0

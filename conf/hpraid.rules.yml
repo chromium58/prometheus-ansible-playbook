@@ -1,0 +1,13 @@
+{% raw %}
+groups:
+- name: hpraid.rules
+  rules:
+  - alert: HPRAID_DRIVE_FAILURE
+    expr: hpraid_diskstate{drive_status!="OK"}
+    for: 10m
+    labels:
+      severity: page
+    annotations:
+      description: '{{$labels.drive_describe}} status is {{$labels.drive_status}}'
+      summary: Drive {{$labels.drive_describe}} failure
+{% endraw %}

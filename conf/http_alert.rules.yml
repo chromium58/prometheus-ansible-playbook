@@ -1,0 +1,13 @@
+{% raw %}
+groups:
+- name: http_alert.rules
+  rules:
+  - alert: ProbeFailing
+    expr: probe_success < 1
+    for: 6m
+    labels:
+      severity: page
+    annotations:
+      DESCRIPTION: probe {{ $labels.instance }} failing
+      SUMMARY: probe {{ $labels.instance }} failing
+{% endraw %}

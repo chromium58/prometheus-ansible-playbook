@@ -1,0 +1,13 @@
+{% raw %}
+groups:
+- name: mdadm.rules
+  rules:
+  - alert: MDADM_DRIVE_FAILURE
+    expr: node_md_disks - node_md_disks_active != 0
+    for: 10m
+    labels:
+      severity: page
+    annotations:
+      description: Detected drive failure in array {{$labels.device}} on host {{$labels.instance}}
+      summary: Array {{$labels.device}} failure
+{% endraw %}

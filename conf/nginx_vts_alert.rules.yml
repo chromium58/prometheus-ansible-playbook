@@ -1,0 +1,18 @@
+{% if nginx_upstreams is defined %}
+groups:
+- name: nginx_vts_alert.rules
+  rules:
+{% for upstream in nginx_upstreams %}
+  - alert: High500s_{{ upstream }}
+    expr: (sum(rate(nginx_upstream_requests{code="5xx",upstream="{{ upstream }}"}[5m]))
+      / sum(rate(nginx_upstream_requests{code="total",upstream="{{ upstream }}"}[5m])))
+      * 100 > 10
+    for: 10m
+    labels:
+      severity: page
+    annotations:
+      description: Upstream {{ upstream }} has an error ratio of {% raw %} {{ $value
+        }} {% endraw %} percents for 10m.
+      summary: High 500 ratio on {{ upstream }}
+{% endfor %}
+{% endif %}

@@ -1,7 +1,7 @@
 # my global config
 global:
   scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 2m # Evaluate rules every 15 seconds. The default is every 1 minute.
+  evaluation_interval: 2m # Evaluate rules.yaml every 15 seconds. The default is every 1 minute.
   # scrape_timeout is set to the global default (10s).
 
   # Attach these labels to any time series or alerts when communicating with
@@ -9,17 +9,22 @@ global:
   external_labels:
     monitor: 'prometheus-monitor'
 
-# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+# Load rules.yaml once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
-  - rules/ssl_expiry.rules
-  - rules/common_alert.rules
-  - rules/http_alert.rules
-  - rules/nginx_vts_alert.rules
-  - rules/hpraid.rules
-  - rules/mdadm.rules
+  - rules/ssl_expiry.rules.yml
+  - rules/common_alert.rules.yml
+  - rules/http_alert.rules.yml
+  - rules/hpraid.rules.yml
+  - rules/mdadm.rules.yml
+  - rules/nginx_vts_rules.yml
+  # - "first.rules.yaml"
+  # - "second.rules.yaml"
 
-  # - "first.rules"
-  # - "second.rules"
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - {{ prometheus_alertmanager_url }}
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
